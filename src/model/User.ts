@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, model } from "mongoose";
 
 export interface Message extends Document {
     context: string;
@@ -25,7 +25,7 @@ const MessageSchema: Schema<Message> = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
 })
 
@@ -72,3 +72,7 @@ const UserSchema: Schema<User> = new Schema({
     },
     messages: [MessageSchema],
 });
+
+const UserModel =  mongoose.models.User as mongoose.Model<User> || mongoose.model<User>("User",UserSchema)
+
+export default UserModel
