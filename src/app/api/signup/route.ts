@@ -3,6 +3,9 @@ import UserModel from "@/model/User";
 import bcrypt from 'bcryptjs'
 import { sendVerification } from "@/helpers/sendVerification";
 import { NextRequest, NextResponse } from "next/server";
+import { signUpValidation, usernameValidation } from "@/schemasValidation/signUpSchema";
+import { getZodErrorMessage } from "@/helpers/zodErrors";
+
 
 export async function POST(request: NextRequest) {
 
@@ -11,7 +14,16 @@ export async function POST(request: NextRequest) {
     try {
 
         const reqBody = await request.json()
-        const { email, username, password } = reqBody
+        const validateInfo = signUpValidation.safeParse(reqBody)
+
+        if (!validateInfo.success) {
+            return NextResponse.json({
+                success: false,
+                error: getZodErrorMessage(validateInfo.error)
+            }, { status: 400 });
+        }
+
+        const { username, email, password } = validateInfo.data;
 
         const VerifiedExistingUser = await UserModel.findOne({
             username,
@@ -76,7 +88,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({
                 success: false,
                 message: emailResponse.message
-            }, { status: 400 })
+            }, { status: 500 })
         }
 
         return NextResponse.json({
