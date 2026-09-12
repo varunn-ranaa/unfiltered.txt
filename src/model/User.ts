@@ -64,11 +64,11 @@ const UserSchema: Schema<User> = new Schema({
     },
     resetVerifyCode: {
         type: String,
-        required: [true, 'Reset Code is required'],
+        required: [false, 'Reset Code is required'],
     },
     resetVerifyCodeExpiry: {
         type: Date,
-        required: [true, 'Reset Code Expiry is required'],
+        required: [false, 'Reset Code Expiry is required'],
     },
     messages: [MessageSchema],
 });
