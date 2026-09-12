@@ -6,6 +6,7 @@ import dbConnect from "@/lib/dbConnect"
 import UserModel from "@/model/User"
 import { type JWT } from "next-auth/jwt"
 import { type Session } from "next-auth"
+import { signInValidation } from "./schemasValidation/signInSchema"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Credentials({
@@ -24,12 +25,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async authorize(credentials: any): Promise<any> {
       await dbConnect()
 
+    const parsedCredentials = signInValidation.safeParse(credentials);
+
+     if (!parsedCredentials.success) {
+          throw new Error("Invalid input formats");
+        }
+
+      const { identifier, password } = parsedCredentials.data;
+
       try {
 
         const user = await UserModel.findOne({
           $or : [
-            {email : credentials.identifier},
-            {username : credentials.identifier}
+            {email : identifier},
+            {username : identifier}
           ]
         } )
 
@@ -41,28 +50,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Please check email and verify !")
         }
 
-        const correctKey =  await  bcrypt.compare(credentials.password , user.password)
-        
-
-        if(correctKey){
-          return user
-        }
-        else{
+        const isPasswordCorrect =  await  bcrypt.compare(password , user.password)
+      
+        if(!isPasswordCorrect){
           throw new Error("Invalid password.")
         }
+        return user
+
       } catch (error: any) {
-        throw new Error("Error in Login.",error)
+        throw new Error(error.message || "Error in Login.");
       }
 
     }
   })],
-  pages : {
-    signIn : '/login'
-  },
   session: {
     strategy: 'jwt'
   },
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks : {
     async jwt({ token, user }) {
 
