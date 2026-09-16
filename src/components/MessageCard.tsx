@@ -16,16 +16,6 @@ type MessageCardProps = {
 
 export default function MessageCard({ message, onMessageDelete }: MessageCardProps) {
 
-    const handleDelete = async () => {
-        try {
-            await axios.delete(`/api/delete-message/${message._id}`)
-            onMessageDelete(message._id.toString())
-        } catch (error) {
-            console.log("error deleting message :", error)
-            toast.add({ type: "error", description: "Failed to delete message", priority: "high" })
-        }
-    }
-
     const createdAt = message.createdAt ? new Date(message.createdAt) : null
 
     return (
@@ -43,7 +33,7 @@ export default function MessageCard({ message, onMessageDelete }: MessageCardPro
                 )}
             </CardContent>
             <div className="absolute right-2 top-2">
-                <DeleteChat onDelete={handleDelete} />
+                <DeleteChat onDelete={() => onMessageDelete(message._id.toString())} />
             </div>
         </Card>
     )
