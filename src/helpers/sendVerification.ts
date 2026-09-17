@@ -1,7 +1,7 @@
 import VerificationEmail from '@/components/email/VerificationEmailTemplate';
-import { resend } from '@/lib/resend';
+import { transporter } from '@/lib/nodemailer';
+import { render } from '@react-email/render';
 import { APIresponse } from '@/types/apiResponse'
-
 
 export async function sendVerification(
     email: string,
@@ -10,12 +10,14 @@ export async function sendVerification(
 ): Promise<APIresponse> {
     try {
 
-        const { data, error } = await resend.emails.send({
-            from: 'Acme <onboarding@resend.dev>',
+        const emailHtml = await render(VerificationEmail({ username: username, otp: verifyCode }))
+
+        await transporter.sendMail({
+            from: `"Unfiltered.txt" <${process.env.GMAIL_USER}>`,
             to: email,
-            subject: 'Unfiltered.txt | Verification Code ',
-            react: VerificationEmail({ username: username , otp : verifyCode }),
-        });
+            subject: 'Unfiltered.txt | Verification Code',
+            html: emailHtml,
+        })
 
         return { success: true, message: 'Send verification email successfully !' }
 

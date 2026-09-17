@@ -6,7 +6,7 @@ import { acceptMessageValidation } from "@/schemasValidation/acceptMessageSchema
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCallback, useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { useSession } from "next-auth/react"
 import axios, { AxiosError } from "axios"
 import { APIresponse } from "@/types/apiResponse"
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Loader2, RefreshCcw, Copy } from 'lucide-react';
+import Navbar from "@/components/Navbar";
 import { User } from "next-auth"
 
 
@@ -25,8 +26,20 @@ export default function Dashboard() {
   const [isSwitchloading, setIsSwitchloading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
-  const handleDeleteMessage = (messageId: string) => {
+  const handleDeleteMessage = async (messageId: string) => {
+    const previousMessages = messages
     setMessages(messages.filter((message) => message._id.toString() !== messageId))
+
+    try {
+      await axios.delete(`/api/delete-message/${messageId}`)
+    } catch (error) {
+      setMessages(previousMessages)
+      toast.add({
+        title: 'Error',
+        description: 'Failed to delete message. Please try again.',
+        type: 'error'
+      })
+    }
   }
 
   const form = useForm<z.infer<typeof acceptMessageValidation>>({
@@ -36,7 +49,7 @@ export default function Dashboard() {
     }
   })
 
-  const { register, watch, setValue } = form
+  const { control, watch, setValue } = form
   const acceptMessages = watch('acceptMessage')
 
   const { data: session } = useSession()
@@ -97,18 +110,20 @@ export default function Dashboard() {
     fetchAcceptingMessages()
   }, [session, fetchMessages, fetchAcceptingMessages, setValue])
 
-  const handleAcceptingMessageSwitch = async () => {
+  const handleAcceptingMessageSwitch = async (newValue: boolean) => {
+    const previousValue = acceptMessages
+    setValue('acceptMessage', newValue)
     setIsSwitchloading(true)
     try {
       await axios.post<APIresponse>('/api/acceptingmessage', {
-        acceptMessage: !acceptMessages
+        acceptMessage: newValue
       })
-      setValue('acceptMessage', !acceptMessages)
       toast.add({
         title: 'Updated',
-        description: `You are now ${!acceptMessages ? 'accepting' : 'not accepting'} messages.`
+        description: `You are now ${newValue ? 'accepting' : 'not accepting'} messages.`
       })
     } catch (error) {
+      setValue('acceptMessage', previousValue)
       const axiosError = error as AxiosError<APIresponse>
       toast.add({
         title: 'Error',
@@ -123,14 +138,17 @@ export default function Dashboard() {
   }
 
   if (!session || !session.user) {
-    return <div></div>;
+    return <>
+        <Navbar />
+        <div></div>
+      </>;
   }
-
+ 
   const { username } = session.user as User;
-
+ 
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/anonymous/${username}`;
-
+  
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
     toast.add({
@@ -141,8 +159,9 @@ export default function Dashboard() {
 
 
   return (
+    <>
+    <Navbar/>
     <div className="mx-4 my-8 max-w-4xl md:mx-8 lg:mx-auto">
-
       <h1 className="font-serif text-3xl tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl">
         Your Dashboard
       </h1>
@@ -172,11 +191,19 @@ export default function Dashboard() {
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <Switch
-          {...register('acceptMessage')}
-          checked={acceptMessages}
-          onCheckedChange={handleAcceptingMessageSwitch}
-          disabled={isSwitchloading}
+        <Controller
+          name="acceptMessage"
+          control={control}
+          render={({ field  }) => (
+            <Switch
+              checked={field.value}
+              onCheckedChange={(checked) => {
+                field.onChange(checked)
+                handleAcceptingMessageSwitch(checked)
+              }}
+              disabled={isSwitchloading}
+            />
+          )}
         />
         <span className="text-sm text-neutral-700 dark:text-neutral-300">
           Accepting messages: <span className="font-medium text-neutral-900 dark:text-neutral-50">{acceptMessages ? 'On' : 'Off'}</span>
@@ -223,5 +250,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   )
 }

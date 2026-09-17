@@ -5,16 +5,15 @@ import { getToken } from 'next-auth/jwt'
  
 
 export async function proxy(request: NextRequest) {
-    const token = await getToken({req : request})
+    const token = await getToken({req : request, secret: process.env.NEXTAUTH_SECRET})
     const { pathname } = request.nextUrl;
 
-  const isPublicPath =
-    pathname === '/' ||
+  const isAuthOnlyPath =
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
     pathname.startsWith('/verify');
 
-  if (token && isPublicPath) {
+  if (token && isAuthOnlyPath) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -31,6 +30,7 @@ export const config = {
     '/signup',
     '/',
     '/dashboard/:path*',
-    '/verify/:path*'
+    '/verify/:path*',
+    '/anonymous/:path*'
   ]
 }

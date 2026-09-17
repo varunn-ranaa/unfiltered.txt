@@ -76,13 +76,13 @@ export default function SignUpForm() {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-neutral-100 px-4">
-            <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-8px_rgba(0,0,0,0.10)]">
+        <div className="flex justify-center items-center min-h-screen bg-neutral-100 dark:bg-neutral-950 px-4">
+            <div className="w-full max-w-sm rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-8px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_-8px_rgba(0,0,0,0.5)]">
                 <div className="mb-8 text-center">
-                    <h1 className="font-serif text-[2.5rem] leading-none tracking-tight text-neutral-900">
+                    <h1 className="font-serif text-[2.5rem] leading-none tracking-tight text-neutral-900 dark:text-neutral-50">
                         Unfiltered.txt
                     </h1>
-                    <p className="mt-3 text-sm text-neutral-500">
+                    <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
                         Start your secret conversations
                     </p>
                 </div>
@@ -95,7 +95,7 @@ export default function SignUpForm() {
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel
                                     htmlFor={field.name}
-                                    className="text-xs font-medium text-neutral-600"
+                                    className="text-xs font-medium text-neutral-600 dark:text-neutral-400"
                                 >
                                     Username
                                 </FieldLabel>
@@ -109,10 +109,10 @@ export default function SignUpForm() {
                                         field.onChange(e)
                                         setUsername(e.target.value.trim())
                                     }}
-                                    className="rounded-lg border border-neutral-300 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 focus-visible:border-neutral-900 transition-colors data-[invalid=true]:border-red-400"
+                                    className="rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 dark:focus-visible:ring-neutral-100/10 focus-visible:border-neutral-900 dark:focus-visible:border-neutral-100 transition-colors data-[invalid=true]:border-red-400 dark:data-[invalid=true]:border-red-500"
                                 />
                                 {isCheckingUsername && (
-                                    <FieldDescription className="text-xs text-neutral-400">
+                                    <FieldDescription className="text-xs text-neutral-400 dark:text-neutral-500">
                                         Checking availability…
                                     </FieldDescription>
                                 )}
@@ -120,8 +120,8 @@ export default function SignUpForm() {
                                     <FieldDescription
                                         className={`text-xs ${
                                             usernameMessage.toLowerCase().includes("available")
-                                                ? "text-emerald-600"
-                                                : "text-neutral-500"
+                                                ? "text-emerald-600 dark:text-emerald-400"
+                                                : "text-neutral-500 dark:text-neutral-400"
                                         }`}
                                     >
                                         {usernameMessage}
@@ -130,7 +130,7 @@ export default function SignUpForm() {
                                 {fieldState.invalid && (
                                     <FieldError
                                         errors={[fieldState.error]}
-                                        className="text-xs text-red-500 font-normal"
+                                        className="text-xs text-red-500 dark:text-red-400 font-normal"
                                     />
                                 )}
                             </Field>
@@ -144,7 +144,7 @@ export default function SignUpForm() {
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel
                                     htmlFor={field.name}
-                                    className="text-xs font-medium text-neutral-600"
+                                    className="text-xs font-medium text-neutral-600 dark:text-neutral-400"
                                 >
                                     Email
                                 </FieldLabel>
@@ -155,12 +155,12 @@ export default function SignUpForm() {
                                     aria-invalid={fieldState.invalid}
                                     placeholder="johndoe@gmail.com"
                                     autoComplete="off"
-                                    className="rounded-lg border border-neutral-300 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 focus-visible:border-neutral-900 transition-colors data-[invalid=true]:border-red-400"
+                                    className="rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 dark:focus-visible:ring-neutral-100/10 focus-visible:border-neutral-900 dark:focus-visible:border-neutral-100 transition-colors data-[invalid=true]:border-red-400 dark:data-[invalid=true]:border-red-500"
                                 />
                                 {fieldState.invalid && (
                                     <FieldError
                                         errors={[fieldState.error]}
-                                        className="text-xs text-red-500 font-normal"
+                                        className="text-xs text-red-500 dark:text-red-400 font-normal"
                                     />
                                 )}
                             </Field>
@@ -174,7 +174,7 @@ export default function SignUpForm() {
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel
                                     htmlFor={field.name}
-                                    className="text-xs font-medium text-neutral-600"
+                                    className="text-xs font-medium text-neutral-600 dark:text-neutral-400"
                                 >
                                     Password
                                 </FieldLabel>
@@ -185,12 +185,12 @@ export default function SignUpForm() {
                                     aria-invalid={fieldState.invalid}
                                     placeholder="Enter a password"
                                     autoComplete="new-password"
-                                    className="rounded-lg border border-neutral-300 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 focus-visible:border-neutral-900 transition-colors data-[invalid=true]:border-red-400"
+                                    className="rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 px-3 py-2 focus-visible:ring-2 focus-visible:ring-neutral-900/10 dark:focus-visible:ring-neutral-100/10 focus-visible:border-neutral-900 dark:focus-visible:border-neutral-100 transition-colors data-[invalid=true]:border-red-400 dark:data-[invalid=true]:border-red-500"
                                 />
                                 {fieldState.invalid && (
                                     <FieldError
                                         errors={[fieldState.error]}
-                                        className="text-xs text-red-500 font-normal"
+                                        className="text-xs text-red-500 dark:text-red-400 font-normal"
                                     />
                                 )}
                             </Field>
@@ -200,16 +200,16 @@ export default function SignUpForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full mt-2 py-3 rounded-md bg-neutral-900 text-white text-sm font-medium tracking-wide transition-colors duration-150 hover:bg-neutral-700 active:bg-neutral-950 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full mt-2 py-3 rounded-md bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-sm font-medium tracking-wide transition-colors duration-150 hover:bg-neutral-700 dark:hover:bg-neutral-300 active:bg-neutral-950 dark:active:bg-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? "Signing up…" : "Sign up"}
                     </button>
                 </form>
 
                 <div className="text-center mt-7">
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         Already a member?{' '}
-                        <Link href="/login" className="text-neutral-900 underline underline-offset-4 hover:text-neutral-600">
+                        <Link href="/login" className="text-neutral-900 dark:text-neutral-100 underline underline-offset-4 hover:text-neutral-600 dark:hover:text-neutral-400">
                             Sign in
                         </Link>
                     </p>

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
         if (!content || !username) {
             return NextResponse.json(
-                { error: "Username and content are required" },
+                { message: "Username and content are required" },
                 { status: 400 }
             );
         }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     success: false,
-                    error: getZodErrorMessage(res.error)
+                    message: getZodErrorMessage(res.error)
                 },
                 { status: 400 }
             );
@@ -36,14 +36,14 @@ export async function POST(request: NextRequest) {
 
         if (!user) {
             return NextResponse.json(
-                { error: "No such user exists!" },
+                { message: "No such user exists!" },
                 { status: 404 }
             );
         }
 
         if (!user.isAcceptingMessages) {
             return NextResponse.json(
-                { success: false, error: "User is not accepting messages at this time." },
+                { success: false, message: "User is not accepting messages at this time." },
                 { status: 403 } // 403 Forbidden
             );
         }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error("Error sending message:", error);
         return NextResponse.json(
-            { error: "Internal Server Error" },
+            { message: "Internal Server Error" },
             { status: 500 }
         );
     }
