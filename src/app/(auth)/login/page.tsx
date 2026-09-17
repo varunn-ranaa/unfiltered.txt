@@ -41,9 +41,9 @@ export default function SignInForm() {
         setIsLoading(true)
         try {
             const result = await signIn('credentials', {
-                redirect: false,
                 identifier: data.identifier,
-                password: data.password
+                password: data.password,
+                redirectTo: '/dashboard'
             })
 
             if (result?.error) {
