@@ -72,7 +72,7 @@ function VerifyCodeFormInner() {
                         Unfiltered.txt
                     </h1>
                     <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
-                        Verify your email !
+                        Verify your email! check the spam folder too.
                     </p>
                 </div>
 
