@@ -16,6 +16,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
+import { Suspense } from "react"
 
 
 const OTP_LENGTH = 6
@@ -65,6 +66,7 @@ export default function VerifyCodeForm() {
     }
 
     return (
+        <Suspense fallback={<div>Loading…</div>}>
         <div className="flex justify-center items-center min-h-screen bg-neutral-100 dark:bg-neutral-950 px-4">
             <div className="w-full max-w-sm rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-8px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_12px_32px_-8px_rgba(0,0,0,0.5)]">
                 <div className="mb-8 text-center">
@@ -127,5 +129,6 @@ export default function VerifyCodeForm() {
                 </form>
             </div>
         </div>
+        </Suspense>
     )
 }
