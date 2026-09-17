@@ -1,26 +1,25 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
+import { auth } from '@/auth'
 
-export async function proxy(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-  const { pathname } = request.nextUrl
+export default auth((req) => {
+  const { pathname } = req.nextUrl
+  const isLoggedIn = !!req.auth
 
   const isAuthOnlyPath =
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
     pathname.startsWith('/verify')
 
-  if (token && isAuthOnlyPath) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+  if (isLoggedIn && isAuthOnlyPath) {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
-  if (!token && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  if (!isLoggedIn && pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', req.url))
   }
 
   return NextResponse.next()
-}
+})
 
 export const config = {
   matcher: [
