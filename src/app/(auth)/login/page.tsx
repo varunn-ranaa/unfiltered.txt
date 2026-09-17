@@ -41,11 +41,12 @@ export default function SignInForm() {
         setIsLoading(true)
         try {
             const result = await signIn('credentials', {
-                redirect: false,
+                redirect:false,
                 identifier: data.identifier,
-                password: data.password
+                password: data.password,
+              
             })
-
+             console.log(result)
             if (result?.error) {
                 const specficCode  = (result as { code : string}).code
                 const message = SIGN_IN_ERROR_MESSAGES[ specficCode ??  result.error] ?? "Invalid credentials"
@@ -53,6 +54,7 @@ export default function SignInForm() {
             } else if (result?.url) {
                 toast.add({ type: "success", description: `Welcome, ${data.identifier}` })
                 router.replace('/dashboard')
+                router.refresh()
             } else {
                 toast.add({ type: "error", description: "Unexpected error. Try again.", priority: "high" })
             }
