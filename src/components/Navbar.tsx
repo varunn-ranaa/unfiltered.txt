@@ -47,13 +47,6 @@ export default function Navbar() {
                     {status === "authenticated" && user && (
                         <>
                             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                                {user.image && (
-                                    <img
-                                        src={user.image}
-                                        alt={user.name ?? "User"}
-                                        className="h-8 w-8 shrink-0 rounded-full object-cover"
-                                    />
-                                )}
                                 <span className="hidden min-w-0 truncate text-sm text-neutral-700 dark:text-neutral-300 sm:inline">
                                     Welcome, {user.username || user.email}
                                 </span>
