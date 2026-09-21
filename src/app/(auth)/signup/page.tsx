@@ -1,6 +1,6 @@
 "use client"
 
-import  { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
@@ -13,12 +13,14 @@ import { APIresponse } from "@/types/apiResponse"
 import Link from "next/link"
 import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { signIn } from "next-auth/react"
 
 export default function SignUpForm() {
     const [username, setUsername] = useState('')
     const [usernameMessage, setUsernameMessage] = useState('')
     const [isCheckingUsername, setIsCheckingUsername] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
     const [debounceUsername] = useDebounceValue(username, 300)
     const router = useRouter()
@@ -57,8 +59,8 @@ export default function SignUpForm() {
         try {
             await axios.post<APIresponse>('/api/signup', data)
             toast.add({
-                type : "success",
-                description : "Account created. Check your email to verify."
+                type: "success",
+                description: "Account created. Check your email to verify."
             })
             router.replace(`/verify?username=${data.username}`)
         } catch (error) {
@@ -66,14 +68,23 @@ export default function SignUpForm() {
             const axiosError = error as AxiosError<APIresponse>
             const errorMessage = axiosError.response?.data.message ?? "Sign up failed"
             toast.add({
-                type :"error",
-                description : errorMessage,
+                type: "error",
+                description: errorMessage,
                 priority: "high"
             })
         } finally {
             setIsLoading(false)
         }
     }
+
+    const onGoogleSignIn = async () => {
+    setIsGoogleLoading(true)
+    try {
+        await signIn('google', { callbackUrl: '/dashboard' })
+    } finally {
+        setIsGoogleLoading(false)
+    }
+}
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-neutral-100 dark:bg-neutral-950 px-4">
@@ -85,6 +96,27 @@ export default function SignUpForm() {
                     <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
                         Start your secret conversations
                     </p>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={onGoogleSignIn}
+                    disabled={isGoogleLoading}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z" />
+                        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z" />
+                        <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.16.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z" />
+                        <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z" />
+                    </svg>
+                    {isGoogleLoading ? "Redirecting…" : "Continue with Google"}
+                </button>
+
+                <div className="flex items-center gap-3 my-6">
+                    <div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+                    <span className="text-xs text-neutral-400 dark:text-neutral-500">or</span>
+                    <div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
                 </div>
 
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -118,11 +150,10 @@ export default function SignUpForm() {
                                 )}
                                 {!isCheckingUsername && usernameMessage && (
                                     <FieldDescription
-                                        className={`text-xs ${
-                                            usernameMessage.toLowerCase().includes("available")
+                                        className={`text-xs ${usernameMessage.toLowerCase().includes("available")
                                                 ? "text-emerald-600 dark:text-emerald-400"
                                                 : "text-neutral-500 dark:text-neutral-400"
-                                        }`}
+                                            }`}
                                     >
                                         {usernameMessage}
                                     </FieldDescription>
