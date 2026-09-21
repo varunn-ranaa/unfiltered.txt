@@ -39,12 +39,14 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    if (existingUser.verifyCode !== code || existingUser.verifyCodeExpiry < new Date()) {
+    const expiry = existingUser.verifyCodeExpiry;
+    const isExpired = !expiry || expiry < new Date();
+    const isCodeWrong = existingUser.verifyCode !== code;
+
+    if (isCodeWrong || isExpired) {
       return NextResponse.json({
         success: false,
-        message: existingUser.verifyCodeExpiry < new Date()
-          ? "Verification code expired!"
-          : "Invalid verification code!"
+        message: isExpired ? "Verification code expired!" : "Invalid verification code!"
       }, { status: 400 });
     }
 
