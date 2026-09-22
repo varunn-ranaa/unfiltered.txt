@@ -8,7 +8,9 @@ export default auth((req) => {
   const isAuthOnlyPath =
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
-    pathname.startsWith('/verify')
+    pathname.startsWith('/verify') ||
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/password-resert-verify')
 
   if (isLoggedIn && isAuthOnlyPath) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
@@ -28,6 +30,7 @@ export const config = {
     '/',
     '/dashboard/:path*',
     '/verify/:path*',
-    '/anonymous/:path*'
+    '/forgot-password/:path*',
+    '/password-resert-verify/:path*',
   ]
 }
