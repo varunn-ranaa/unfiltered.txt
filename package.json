@@ -16,6 +16,8 @@
     "@hookform/resolvers": "^5.9.1",
     "@nanostores/react": "github:ai/react",
     "@react-email/render": "^2.1.0",
+    "@upstash/ratelimit": "^2.2.0",
+    "@upstash/redis": "^1.39.0",
     "ai": "^7.0.99",
     "axios": "^1.20.0",
     "bcryptjs": "^3.0.3",
