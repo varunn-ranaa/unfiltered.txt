@@ -41,6 +41,29 @@ export default function AnonymousMessage() {
   const params = useParams<paramsProps>()
   const username = params.username
 
+  // The route returns JSON error bodies (e.g. the 429 rate-limit response),
+  // but useCompletion just hands us the raw text as error.message.
+  // Parse it here so we never dump raw JSON on screen.
+  const getSuggestionErrorMessage = (err?: Error): string => {
+    if (!err) return ''
+    try {
+      const parsed = JSON.parse(err.message)
+      return parsed.message ?? 'Failed to generate suggestions. Try again later.'
+    } catch {
+      return 'Failed to generate suggestions. Try again later.'
+    }
+  }
+
+  useEffect(() => {
+    if (error) {
+      toast.add({
+        type: 'error',
+        description: getSuggestionErrorMessage(error),
+        priority: 'high',
+      })
+    }
+  }, [error])
+
 
   const form = useForm<z.infer<typeof messageValidation>>({
     resolver: zodResolver(messageValidation),
@@ -263,7 +286,9 @@ export default function AnonymousMessage() {
         </p>
 
         {error ? (
-          <p className="mt-4 text-sm text-red-500">{error.message}</p>
+          <p className="mt-4 text-sm text-neutral-400 dark:text-neutral-500">
+            Try again later.
+          </p>
         ) : suggestions.length > 0 ? (
           <Card className="mt-4 border-neutral-200 dark:border-neutral-800">
             <CardContent className="flex flex-col gap-2 pt-6">
